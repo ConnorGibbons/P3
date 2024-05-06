@@ -182,7 +182,7 @@ def runQLQuery(index, queryWords, u = 300):
         results.add(document, score)
     return results
 
-def runBM25Query(index, queryWords, k1 = 1.2, k2 = 5,b = 0.75):
+def runBM25Query(index, queryWords, k1 = 1.8, k2 = 5,b = 0.75):
     documents = set()
     results = QueryResults("BM25")
     for word in queryWords:
@@ -192,16 +192,19 @@ def runBM25Query(index, queryWords, k1 = 1.2, k2 = 5,b = 0.75):
         bigK = k1 * ((1 - b) + b * (index.getDocumentLength(document) / index.getAverageDocumentLength()))
         score = 0
         for word in queryWords:
-            count = 0
-            for word2 in queryWords:
-                if word2 == word:
-                    count += 1
-            q_fi = count
-            term1 = 1/((index.getTokenDocumentCount(word) + 0.5)/(index.getNumberOfDocuments() - index.getTokenDocumentCount(word) + 0.5))
-            term2 =  ((k1 + 1) * index.getTokenFrequencyInDocument(word, document)) / (bigK + index.getTokenFrequencyInDocument(word, document))
+            q_fi = 1 # frequency of word in query
+            f_i = index.getTokenFrequencyInDocument(word, document) # frequency of word in document
+            n_i = index.getTokenDocumentCount(word) # number of documents containing word
+            bigN = index.getNumberOfDocuments() # number of documents in index
+            if(word == 'united' and document == '24323-art19'):
+                print(f'{f_i} {q_fi} {bigN} {n_i} {index.getDocumentLength(document)} {index.getAverageDocumentLength()}')
+            term1 = math.log((bigN - n_i + 0.5) / (n_i + 0.5))
+            term2 =  ((k1 + 1) * f_i) / (bigK + f_i)
             term3 = ((k2 + 1) * q_fi) / (k2 + q_fi) 
             if(term1 != 0 and term2 != 0 and term3 != 0):
-                score += math.log((term1 * term2 * term3))
+                if(word == 'united' and document == '24323-art19'):
+                    print(f'{document} {word}: {term1 * term2 * term3}')
+                score += (term1 * term2 * term3)
         results.add(document, score)
     return results
 
@@ -218,7 +221,11 @@ if __name__ == '__main__':
     inputFileJSON = inputFile.read()
     inputFileDict = json.loads(inputFileJSON)
     index = buildIndex(inputFileDict)
-    print(index.getTotalTokenFrequency('science'))
+    # print(index.getTokenFrequencyInDocument('united','24323-art19'))
+    # print(index.getNumberOfDocuments())
+    # print(index.getTokenDocumentCount('united'))
+    # print(index.getDocumentLength('24323-art19'))
+    # print(index.getAverageDocumentLength())
     if queriesFile == 'showIndex':
         exit(0)
         # Invoke your debug function here (Optional)
