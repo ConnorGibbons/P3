@@ -85,7 +85,7 @@ class QueryResults:
         results = []
         rank = 1
         for result in self.results:
-            results.append(f'{queryName:{13}}skip {result.document:{19}} {rank:{4}} {round(result.score,4)} {runTag+self.method}')
+            results.append(f'{queryName:{15}} skip {result.document:{19}} {rank:{4}} {round(result.score,4)} {runTag+self.method}')
             rank += 1
         return results
 
