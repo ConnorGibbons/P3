@@ -10,8 +10,10 @@ class Index: # Important: the methods assume that once the index is built, it is
         self.documents = {}
         self.totalUniqueTokens = None
         self.totalTokenCount = None
+        self.docCount = 0
     
     def add(self, document):
+        self.docCount += 1
         i = 0
         self.documents[document['storyID']] = document
         for token in document['text'].split():
@@ -35,6 +37,9 @@ class Index: # Important: the methods assume that once the index is built, it is
     def getDocumentLength(self, document): # Number of tokens in the document
         return len(self.documents[document]['text'].split()) if document in self.documents else 0
     
+    def getAverageDocumentLength(self): # Average number of tokens in documents
+        return self.getTotalTokenCount() / self.getNumberOfDocuments()
+    
     def getTokenFrequencyInDocument(self, token, document): # Number of times token appears in document
         return len(self.index[token][document]) if token in self.index and document in self.index[token] else 0
     
@@ -56,7 +61,7 @@ class Index: # Important: the methods assume that once the index is built, it is
         
     
     def getNumberOfDocuments(self): # Number of documents in the index
-        return len(set([document for token in self.index for document in self.index[token]]))
+        return self.docCount
     
     def getIndex(self):
         return self.index
@@ -184,7 +189,7 @@ def runBM25Query(index, queryWords, k1 = 1.2, k2 = 5,b = 0.75):
         relevantDocs = index.getDocumentIDsForToken(word)
         documents = documents.union(relevantDocs)
     for document in documents:
-        bigK = k1 * ((1 - b) + b * (index.getDocumentLength(document) / index.getNumberOfDocuments()))
+        bigK = k1 * ((1 - b) + b * (index.getDocumentLength(document) / index.getAverageDocumentLength()))
         score = 0
         for word in queryWords:
             count = 0
