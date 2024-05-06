@@ -4,10 +4,12 @@ import gzip
 import json
 import math
 
-class Index:
+class Index: # Important: the methods assume that once the index is built, it isn't modified
     def __init__(self):
         self.index = {}
         self.documents = {}
+        self.totalUniqueTokens = None
+        self.totalTokenCount = None
     
     def add(self, document):
         i = 0
@@ -39,8 +41,19 @@ class Index:
     def getTotalTokenFrequency(self, token): # Number of times token appears in all documents
         return sum([len(self.index[token][document]) for document in self.index[token]]) if token in self.index else 0
     
-    def getTotalTokenCount(self): # Number of unique tokens in the index
-        return len(self.index)
+    def getUniqueTotalTokenCount(self): # Number of unique tokens in the index
+        if self.totalUniqueTokens is None:
+            self.totalUniqueTokens = len(self.index)
+        return self.totalUniqueTokens
+    
+    def getTotalTokenCount(self): # Total number of tokens in the index
+        if self.totalTokenCount is None:
+            sum = 0
+            for token in self.index:
+                sum += self.getTotalTokenFrequency(token)
+            self.totalTokenCount = sum
+        return self.totalTokenCount
+        
     
     def getNumberOfDocuments(self): # Number of documents in the index
         return len(set([document for token in self.index for document in self.index[token]]))
@@ -158,7 +171,7 @@ def runQLQuery(index, queryWords, u = 300):
     for document in documents:
         score = 0
         for word in queryWords:
-            numerator = index.getTokenFrequencyInDocument(word, document) + u * (index.getTotalTokenFrequency(word) / index.getNumberOfDocuments())
+            numerator = index.getTokenFrequencyInDocument(word, document) + u * (index.getTotalTokenFrequency(word) / index.getTotalTokenCount())
             denominator = index.getDocumentLength(document) + u
             score += math.log((numerator / denominator))
         results.add(document, score)
@@ -200,7 +213,7 @@ if __name__ == '__main__':
     inputFileJSON = inputFile.read()
     inputFileDict = json.loads(inputFileJSON)
     index = buildIndex(inputFileDict)
-
+    print(index.getTotalTokenFrequency('science'))
     if queriesFile == 'showIndex':
         exit(0)
         # Invoke your debug function here (Optional)
