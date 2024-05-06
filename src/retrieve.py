@@ -196,14 +196,10 @@ def runBM25Query(index, queryWords, k1 = 1.8, k2 = 5,b = 0.75):
             f_i = index.getTokenFrequencyInDocument(word, document) # frequency of word in document
             n_i = index.getTokenDocumentCount(word) # number of documents containing word
             bigN = index.getNumberOfDocuments() # number of documents in index
-            if(word == 'united' and document == '24323-art19'):
-                print(f'{f_i} {q_fi} {bigN} {n_i} {index.getDocumentLength(document)} {index.getAverageDocumentLength()}')
             term1 = math.log((bigN - n_i + 0.5) / (n_i + 0.5))
             term2 =  ((k1 + 1) * f_i) / (bigK + f_i)
             term3 = ((k2 + 1) * q_fi) / (k2 + q_fi) 
             if(term1 != 0 and term2 != 0 and term3 != 0):
-                if(word == 'united' and document == '24323-art19'):
-                    print(f'{document} {word}: {term1 * term2 * term3}')
                 score += (term1 * term2 * term3)
         results.add(document, score)
     return results

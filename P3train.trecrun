@@ -912,8 +912,8 @@ q-sciam-bm25    skip 8718-id_9            258 1.3296 cgibbonsBM25
 q-sciam-bm25    skip 16360-art25          259 1.3259 cgibbonsBM25
 q-sciam-bm25    skip 11383-id_17          260 1.3206 cgibbonsBM25
 q-sciam-bm25    skip 8408-id_17           261 1.3044 cgibbonsBM25
-q-sciam-bm25    skip 16948-art13          262 1.2913 cgibbonsBM25
-q-sciam-bm25    skip 18265-art05          263 1.2913 cgibbonsBM25
+q-sciam-bm25    skip 18265-art05          262 1.2913 cgibbonsBM25
+q-sciam-bm25    skip 16948-art13          263 1.2913 cgibbonsBM25
 q-sciam-bm25    skip 8504-id_26           264 1.2883 cgibbonsBM25
 q-sciam-bm25    skip 8952-id_56           265 1.2731 cgibbonsBM25
 q-sciam-bm25    skip 8504-id_14           266 1.2669 cgibbonsBM25
