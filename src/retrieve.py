@@ -66,6 +66,53 @@ class Index: # Important: the methods assume that once the index is built, it is
     def getIndex(self):
         return self.index
     
+    def shortestDocLength(self):
+        shortest = float('inf')
+        shortestName = None
+        for document in self.documents:
+            length = self.getDocumentLength(document)
+            if length < shortest:
+                shortest = length
+                shortestName = document
+        return shortest
+    
+    def longestDocLength(self):
+        longest = 0
+        longestName = None
+        for document in self.documents:
+            length = self.getDocumentLength(document)
+            if length > longest:
+                longest = length
+                longestName = document
+        return longest
+    
+    def mostCommonToken(self):
+        mostCommon = 0
+        mostCommonName = None
+        for token in self.index:
+            docs = self.getTokenDocumentCount(token)
+            if docs > mostCommon:
+                mostCommon = docs
+                mostCommonName = token
+        return mostCommonName
+    
+    def mostCommonTokenFrequency(self):
+        mostCommon = 0
+        mostCommonName = None
+        for token in self.index:
+            frequency = self.getTotalTokenFrequency(token)
+            if frequency > mostCommon:
+                mostCommon = frequency
+                mostCommonName = token
+        return mostCommonName
+    
+    def percentOccuringOnce(self):
+        count = 0
+        for token in self.index:
+            if self.getTotalTokenFrequency(token) == 1:
+                count += 1
+        return count / self.getUniqueTotalTokenCount()
+    
 
     
 class QueryResults:
@@ -216,12 +263,10 @@ if __name__ == '__main__':
     inputFile = gzip.open(inputFile, 'rt', encoding='utf-8')
     inputFileJSON = inputFile.read()
     inputFileDict = json.loads(inputFileJSON)
+    
     index = buildIndex(inputFileDict)
-    # print(index.getTokenFrequencyInDocument('united','24323-art19'))
-    # print(index.getNumberOfDocuments())
-    # print(index.getTokenDocumentCount('united'))
-    # print(index.getDocumentLength('24323-art19'))
-    # print(index.getAverageDocumentLength())
+
+    # print(index.getDocumentIDsForToken('amherst'))
     if queriesFile == 'showIndex':
         exit(0)
         # Invoke your debug function here (Optional)
